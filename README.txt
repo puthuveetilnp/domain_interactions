@@ -3,6 +3,7 @@ To calculate a domain pair frequency list, first you need:
 1. A paired list of bait and prey proteins. See E.coli_paired.csv for example
 2. A list from Uniprot with the domains (PFAM or InterPro) of the bait proteins. See E.coli_bait.csv for example
 3. A list from Uniprot with the domains (PFAM or InterPro) of the bait proteins. See E.coli_prey.csv
+4. A txt file downloaded from 3did containing all the interactions from the database.
 
 Next, open and run the file "find_domain_pairs.py"
 
