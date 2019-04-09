@@ -1,4 +1,4 @@
-@author: Angel Wong
+# Author: Angel Wong
 
 import csv
 
