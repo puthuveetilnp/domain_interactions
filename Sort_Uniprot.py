@@ -1,3 +1,5 @@
+# Author: Angel Wong
+
 import csv
 # csvWriter method which takes in a dictionary and the name of the file you want to write it to.
 # It will go through each key in your map and see if it the value is empty or not. If it is not empty then we will add
