@@ -41,16 +41,14 @@ This program aims to:
 
      6. Shuffle one of domain lists (Ex: XDomains)
      7. Then do processes 2-4 again
-     8. Do steps 5-6 a 1000 times, while keeping a dictionary that looks like this:
-                        {PF01131 - PF46133: [245250, 9760]}
-                        245250 - the sum of the total number of times a combination appears in a randomization
-                        9760 - the total number of times the combination appeared in the 1000 randomizations
+     8. Do steps 5-6 a 1000 times, while keeping a dictionary that keeps tract of how many times the count of the domain pair
+               is greater than or equal to its count before shuffling:
 
-     9. Take the average number of times a combination appeared (Ex: 245250/9760 = 25)
+     9. Take the average number of times a combination appeared
      10. Do steps 5-8 for the other domain lists (YDomains)
      11. For each domain pair, get the number of times the combination appeared for the non-shuffled combinations (
          (step 4) and the number of times the combination appeared for the shuffled combinations (step 8) and take
-         log(non-shuffled/shuffled).
+         log(non-shuffled/shuffled), and see if domain pair exists in the 3did or DIMA database.
      12. Export results
 """
 
@@ -167,11 +165,12 @@ def add_reverse_combos(count_dict):
     return edit_count
 
 
-def randomize_a_1000(domain_list1, domain_list2):
+def randomize_a_1000(domain_list1, domain_list2, original_counts_dict):
     """
     Randomization (see steps 5-8)
     :param domain_list1: nested list of domains for a column of interactant in a pair of interacting proteins (list you want to shuffle)
     :param domain_list2: nested list of domains for a column of the other interactant in a pair of interacting proteins (list remains unchanged)
+    :param original_counts_dict: dictionary of domains pairs and their counts
     :return: a dictionary of the average counts for each domain combination
     """
     my_count = {}
@@ -181,12 +180,14 @@ def randomize_a_1000(domain_list1, domain_list2):
         randomized_count = add_reverse_combos(combo_counter(randomized_domain_combo))
 
         for k, v in randomized_count.items():
-            # if combination is new (not already in the dictionary), make a new key for it
-            if k not in my_count.keys():
-                my_count[k] = v
 
-            else:
-                my_count[k] += v  # the sum of all the counts of a particular combinations
+            # if combination is new (not already in the dictionary), make a new key for it
+            if v >= original_counts_dict[k]:
+                if k not in my_count.keys():
+                    my_count[k] = 1
+
+                else:
+                    my_count[k] += 1  # the sum of all the counts of a particular combinations
                 # my_count[k][1] += 1  # the number of times the combination appears
 
     # Take the average of the sum of the counts and the number of times the combination appears
@@ -202,10 +203,10 @@ def consolidate_my_information(original_dict, shuffled_dict):
     """
     Now that the counts for the domain pairs have been calculated (and the randomization has been done), this function
     will consolidate the information into one dictionary and then normalize the counts and then see if a given domain
-    pair can be found in the 3did database
+    pair can be found in the 3did and DIMA database
     :param original_dict: dictionary of counts with the reverse domain combos added/deleted
     :param shuffled_dict: a dictionary of the average counts for each domain combination
-    :return:
+    :return: a dictionary containing the log_odds value and if domain pair exists in 3did and DIMA for each domain pair
     """
     # Open the data from 3did database
     all_3did = []
@@ -338,12 +339,14 @@ def get_my_domain_combinations(file_name, species_name):
 
 
     """Shuffle the first domain list"""
-    shuffled_X_count = randomize_a_1000(X_domain, Y_domain)
+    shuffled_X_count = randomize_a_1000(X_domain, Y_domain, edited_original_count)
 
     """Shuffle the second domain list"""
-    shuffled_Y_count = randomize_a_1000(Y_copy, X_copy)
+    shuffled_Y_count = randomize_a_1000(Y_copy, X_copy, edited_original_count)
 
     """Export results"""
     export_combos("X", consolidate_my_information(edited_original_count, shuffled_X_count), species_name)
     export_combos("Y", consolidate_my_information(edited_original_count, shuffled_Y_count), species_name)
 
+
+# get_my_domain_combinations("E.coli_PFAM.csv", "E.coli")
