@@ -10,9 +10,9 @@ import copy
 Input file: (this example input file uses PFAM identifiers, but this program can also use InterPro ids)
 
 Protein X    Xdomains                           Protein Y           YDomains
-P10408	     PF02810 PF07517 PF01043 PF07516 	PF31119	            PF01553 PF00501 
-P0AA37	     PF00849 	                        PF0A8P1	            PF03588 
-P14294	     PF01131 PF01751 	                PF46133	            PF03806 
+P10408	     PF02810 PF07517 PF01043 PF07516   P31119	            PF01553 PF00501 
+P0AA37	     PF00849 	                        P0A8P1	            PF03588 
+P14294	     PF01131 PF01751 	              P46133	            PF03806 
 
 
 
